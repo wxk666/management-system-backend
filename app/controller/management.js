@@ -32,10 +32,11 @@ class ManagementController extends Controller {
         const {ctx} = this;
         const managementIds = []
         const managementNames = []
-        const {name, count, creator, money} = ctx.request.body
+        const {name, count, creator, money,time,id} = ctx.request.body
         for(let i = 0;i < count;i++){
             const management = await ctx.model.Management.create({
-                name: name + i,
+                id: `${id}-${i}`,
+                name: `${name} - ${i}`,
                 status:"正常"
             })
             managementIds.push(management.id)
@@ -46,7 +47,7 @@ class ManagementController extends Controller {
             money,
             managementIds,
             managementNames,
-            time: Date.now(),
+            time:new Date(time).getTime(),
             count
         })
         ctx.status = 200;
@@ -56,16 +57,16 @@ class ManagementController extends Controller {
     }
     async fix() {
         const {ctx} = this;
-        const {_id, creator, money} = ctx.request.body
+        const {_id, creator, money, time} = ctx.request.body
         const management = await ctx.model.Management.findOne({_id})
         management.status = "维修"
         management.save()
         const fix = await ctx.model.Fix.create({
             creator,
             money,
-            managementId: _id,
+            managementId: management.id,
             managementName: management.name,
-            time: Date.now(),
+            time:new Date(time).getTime(),
         })
         ctx.status = 200;
         ctx.body = {
@@ -74,15 +75,15 @@ class ManagementController extends Controller {
     }
     async scrapped() {
         const {ctx} = this;
-        const {_id, creator} = ctx.request.body
+        const {_id, creator,time} = ctx.request.body
         const management = await ctx.model.Management.findOne({_id})
         management.status = "报废"
         management.save()
         const scrapped = await ctx.model.Scrapped.create({
             creator,
-            managementId: _id,
+            managementId: management.id,
             managementName: management.name,
-            time: Date.now(),
+            time:new Date(time).getTime(),
         })
         ctx.status = 200;
         ctx.body = {

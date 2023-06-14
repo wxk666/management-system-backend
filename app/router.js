@@ -18,4 +18,7 @@ module.exports = app => {
   router.get('/api/scrapped/list', controller.scrapped.list);
   router.delete('/api/fix', controller.fix.remove);
   router.get('/api/fix/list', controller.fix.list);
+  router.patch('/api/fix', controller.fix.update);
+  router.patch('/api/order', controller.order.update);
+  router.patch('/api/scrapped', controller.scrapped.update);
 };
